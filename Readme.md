@@ -44,4 +44,58 @@ Backend
 Frontend
 Communicate via API
 
+<!-- Gathering the Information /Requirements -->
 
+1.Create an account
+2.Login
+3.Update Your Profile
+4.Feed Page - Explore
+5.Send Connection Requests
+6.See our Matches
+7.See the Request we have sent /received
+8.Update Your Profile
+
+<!-- Tech Planing -->
+
+Two Microservices
+1.Frontend
+2.Backend - NodeJs, MongoDb
+
+<!-- LLD : Low Level Design  -->
+
+<!-- Collections in Databases  -->
+
+1.Users  
+firstName,lastName,emailId,password,age,gender
+
+2.ConnectionRequest
+fromUserId
+toUserId
+status = pending
+
+There is 4 state
+after pending then accepted or rejected
+ignored
+
+<!-- Api Design  -->
+
+RestApi
+
+GET : TO GET DATA
+POST : TO SEND THE DATA
+PUT : UPDATE THE DATA
+PATCH : partially Update the Data
+DELETE : DELETE THE DATA
+
+<!-- Api we need -->
+
+CRUD : CREATE READ UPDATE AND DELETE
+POST : /signup
+POST : /login
+GET : /profile
+POST : /profile
+PATCH : /profile
+POST : /sendRequest => ignore || interested
+POST : /reviewRequest => accept || reject
+GET : /requests
+GET : /connections
