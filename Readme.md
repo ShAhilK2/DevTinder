@@ -99,3 +99,13 @@ POST : /sendRequest => ignore || interested
 POST : /reviewRequest => accept || reject
 GET : /requests
 GET : /connections
+
+Order of the Routes Matter a Lot
+
+get("/ab?c") // b is optional
+get("/a(bd)?c") //bd is optional
+get("/ab+c") //abc abbc abbbbbbc match the pattern
+get("/ab \* cd") / / abcd abdbkjdfjfkcd start with ab and end with cd
+
+get("/a/")
+get("/.*fly/")
