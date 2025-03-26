@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-
+const validate = require("validator");
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -30,14 +30,29 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      validate(value) {
+        if (!validate.isEmail(value)) {
+          throw new Error("Invalid Email Address " + value);
+        }
+      },
     },
     password: {
       type: String,
       required: true,
+      validate(value) {
+        if (!validate.isStrongPassword(value)) {
+          throw new Error("Please make Strong Password");
+        }
+      },
     },
     photoUrl: {
       type: String,
       default: "https://api.dicebear.com/9.x/lorelei/svg?flip=true",
+      validate(value) {
+        if (!validate.isURL(value)) {
+          throw new Error("Invalid photo Url " + value);
+        }
+      },
     },
     about: {
       type: String,
