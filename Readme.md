@@ -108,4 +108,6 @@ get("/ab+c") //abc abbc abbbbbbc match the pattern
 get("/ab \* cd") / / abcd abdbkjdfjfkcd start with ab and end with cd
 
 get("/a/")
-get("/.*fly/")
+get("/.\*fly/")
+
+<!-- NEVER TRUST REQ.BODY -->
