@@ -1,5 +1,5 @@
 const express = require("express");
-const { adminAuth, userAuth } = require("./middlewares/auth");
+const { userAuth } = require("./middlewares/auth");
 require("dotenv/config.js");
 require("./config/database");
 const bcrypt = require("bcrypt");
@@ -8,8 +8,12 @@ const User = require("./models/user");
 const ValidationSignUp = require("./utils/validation");
 const app = express();
 const PORT = process.env.PORT || 5000;
+const jwt = require("jsonwebtoken");
+
+const cookieParser = require("cookie-parser");
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup", async (req, res) => {
   // Encrypt the password
@@ -50,13 +54,21 @@ app.post("/login", async (req, res) => {
     if (!user) {
       // Dont expose the database from attackers
       // throw new Error("EmailId Not Present in Database.");
-
       throw new Error("Invalid Credentials");
     }
+    const isPasswordValid = await user.ValidatePassword(password);
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
     console.log(isPasswordValid);
     if (isPasswordValid) {
+      // Create the JWT Token
+      const token = await user.getJWT();
+
+      // Add the token to cookie and send the response back to the user
+
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 8 * 3600000),
+      });
+
       res.status(200).send({ message: "User Login Successfully !" });
     } else {
       throw new Error("Password is not correct");
@@ -66,6 +78,12 @@ app.post("/login", async (req, res) => {
       .status(400)
       .send({ message: "Error Login the User", error: error.message });
   }
+});
+
+app.get("/profile", userAuth, async (req, res) => {
+  const user = req.user;
+
+  res.send(user.firstName + " Send the Profile Request");
 });
 
 // get user by email
@@ -100,7 +118,6 @@ app.delete("/user", async (req, res) => {
   try {
     const { userId } = req.body;
     await User.findByIdAndDelete({ _id: userId });
-
     res.status(400).send("User Deleted Succesfully");
   } catch (error) {
     res.status(400).send("Something Went Wrong");
@@ -111,9 +128,9 @@ app.delete("/user", async (req, res) => {
 app.patch("/user/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
-    console.log(userId);
+    // console.log(userId);
     const data = req.body;
-    console.log(data);
+    // console.log(data);
     // await User.findByIdAndUpdate({ _id: userId }, data);
 
     const ALLOWED_UPDATES = [
